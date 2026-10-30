@@ -36,11 +36,21 @@ CHC (Community Health Centre) માં HMIS Form-8 ના રોજિંદા
   **બેકઅપ પાછો લાવો** થી પાછો મેળવી શકાય.
 
 ### iPhone પર કેવી રીતે ખોલવું
-* સૌથી સહેલું: રેપોની GitHub Pages લિંક (જો ચાલુ હોય) Safari માં ખોલો →
-  Share → **Add to Home Screen**, પછી એપની જેમ વાપરો.
-* અથવા `index.html` ડાઉનલોડ કરીને **Files** એપમાં સેવ કરો, પછી એ ફાઇલ
-  Safari માં ખોલો.
-* પહેલી વાર ખોલો પછી ઇન્ટરનેટની જરૂર નથી.
+
+આ એપ એક જ HTML ફાઇલ છે. ત્રણ રીતે વાપરી શકાય:
+
+1. **સીધું બ્રાઉઝરમાં (સૌથી સહેલું)** — Safari માં આ લિંક ખોલો:
+   `https://htmlpreview.github.io/?https://raw.githubusercontent.com/solankirajnikant1080-cell/kilo-test/cline/fpcpgk0f/form8/index.html`
+   પછી Share → **Add to Home Screen** કરી લો, એપની જેમ ખૂલશે.
+2. **GitHub Pages (કાયમી લિંક)** — રેપો → Settings → Pages → Branch: `cline/fpcpgk0f`,
+   folder: `/form8` પસંદ કરી Save કરો. પછી મળતી લિંક
+   `https://solankirajnikant1080-cell.github.io/kilo-test/` Safari માં ખોલો.
+3. **કોમ્પ્યુટર પર (સંપૂર્ણ ઓફલાઇન)** — `index.html` ડાઉનલોડ કરીને ડબલ-ક્લિક કરો;
+   ઇન્ટરનેટની જરૂર નથી. iPhone પર ફાઇલ સેવ કરી, "Files" એપમાંથી ખોલી શકાય
+   (JS ચલાવતી એપ જરૂરી, દા.ત. Safari માં ડ્રેગ કરીને).
+
+> નોંધ: એપ પહેલી વાર ખુલ્યા પછી ડેટા ફોનમાં જ સેવ રહે છે; ઇન્ટરનેટ ગયા પછી પણ
+> ભરેલો ડેટા અને Excel એક્સપોર્ટ કામ કરશે (પેજ રિફ્રેશ ન કરવું).
 
 ## 2. Excel ટેમ્પલેટ (`form8-template.xlsx`)
 
