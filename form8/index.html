@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<title>CHC HMIS Form-8 — ડેટા એન્ટ્રી અને Excel એક્સપોર્ટ</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#14202e; --muted:#5c6b7a;
+    --line:#d8e0e8; --brand:#0b6b57; --brand-2:#0e8a70; --accent:#0b5fa5;
+    --warn:#b3261e; --total:#eef7f4;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Gujarati","Shruti",Arial,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:15px; line-height:1.45;
+    padding-bottom:96px;
+  }
+  header{
+    background:linear-gradient(135deg,var(--brand),var(--brand-2));
+    color:#fff; padding:14px 14px 12px;
+    position:sticky; top:0; z-index:20; box-shadow:0 2px 10px rgba(0,0,0,.12);
+  }
+  header h1{margin:0; font-size:17px; font-weight:700; letter-spacing:.2px}
+  header p{margin:2px 0 0; font-size:12px; opacity:.9}
+  main{padding:12px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:12px}
+  .card h2{margin:0 0 10px; font-size:14px; font-weight:700; color:var(--brand); text-transform:none}
+  label{display:block; font-size:12px; color:var(--muted); margin-bottom:4px; font-weight:600}
+  input,select,textarea{
+    width:100%; font:inherit; font-size:15px; color:var(--ink);
+    background:#fff; border:1px solid var(--line); border-radius:9px;
+    padding:9px 10px; min-height:40px;
+  }
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--brand-2); outline-offset:1px; border-color:var(--brand-2)}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .grid3{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media(min-width:640px){ .grid3{grid-template-columns:1fr 1fr 1fr} }
+  .row-gap{margin-bottom:10px}
+  button{
+    font:inherit; font-weight:600; border-radius:10px; border:1px solid transparent;
+    padding:11px 14px; min-height:44px; cursor:pointer; background:#eef2f6; color:var(--ink);
+  }
+  button:active{transform:translateY(1px)}
+  .btn-primary{background:var(--brand); color:#fff}
+  .btn-accent{background:var(--accent); color:#fff}
+  .btn-ghost{background:#fff; border-color:var(--line)}
+  .btn-danger{background:#fdeceb; color:var(--warn); border-color:#f6cfcc}
+  .btn-sm{padding:8px 10px; min-height:38px; font-size:13px}
+  .btn-row{display:flex; flex-wrap:wrap; gap:8px}
+  .btn-row > button{flex:1 1 auto}
+  .table-wrap{overflow:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--line); border-radius:10px; background:#fff}
+  table{border-collapse:separate; border-spacing:0; width:100%; font-size:13px}
+  thead th{
+    position:sticky; top:0; background:#eef2f6; z-index:5;
+    border-bottom:1px solid var(--line); border-right:1px solid var(--line);
+    padding:8px 6px; font-size:12px; font-weight:700; white-space:nowrap; text-align:center;
+    min-width:78px;
+  }
+  thead th:first-child{left:0; z-index:6; background:#e7edf3}
+  tbody th{
+    position:sticky; left:0; background:#f7f9fb; z-index:4;
+    border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:6px; font-size:12px; font-weight:700; color:var(--muted); text-align:center; min-width:42px;
+  }
+  tbody td{border-bottom:1px solid var(--line); border-right:1px solid var(--line); padding:0}
+  tbody td input{
+    border:0; border-radius:0; min-height:38px; padding:6px 6px; font-size:13px;
+    text-align:center; background:transparent;
+  }
+  tbody td input:focus{outline:2px solid var(--brand-2); outline-offset:-2px; background:#f4fbf8}
+  tbody tr:nth-child(even) td{background:#fcfdfe}
+  tfoot td{
+    background:var(--total); font-weight:700; font-size:13px; text-align:center;
+    border-top:2px solid var(--brand-2); border-right:1px solid var(--line); padding:8px 6px;
+    white-space:nowrap;
+  }
+  tfoot td:first-child{position:sticky; left:0; z-index:4; background:#e3f1ec; text-align:left; padding-left:8px}
+  .hint{font-size:12px; color:var(--muted); margin:8px 0 0}
+  .col-item{display:grid; grid-template-columns:1fr 92px 40px; gap:8px; align-items:center; margin-bottom:8px}
+  .col-item input[type=text]{min-height:38px; padding:7px 9px; font-size:14px}
+  .col-item select{min-height:38px; padding:6px; font-size:13px}
+  .icon-btn{background:#fdeceb; color:var(--warn); border:1px solid #f6cfcc; padding:0; min-height:38px; font-size:16px}
+  .toast{
+    position:fixed; left:50%; bottom:20px; transform:translateX(-50%) translateY(120%);
+    background:#14202e; color:#fff; padding:11px 16px; border-radius:10px; font-size:13px;
+    max-width:92vw; text-align:center; transition:transform .25s ease; z-index:99;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .badge{display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px;
+    background:rgba(255,255,255,.18); color:#fff; margin-left:6px; vertical-align:middle}
+  .sticky-actions{
+    position:fixed; left:0; right:0; bottom:0; z-index:30; background:rgba(255,255,255,.97);
+    border-top:1px solid var(--line); padding:9px 12px calc(9px + env(safe-area-inset-bottom));
+    display:flex; gap:8px; box-shadow:0 -4px 14px rgba(0,0,0,.07);
+  }
+  .sticky-actions button{flex:1}
+  .muted{color:var(--muted)}
+  details summary{cursor:pointer; font-weight:700; font-size:14px; color:var(--brand); padding:2px 0}
+  details[open] summary{margin-bottom:10px}
+  .stack-list{list-style:none; margin:0; padding:0; font-size:13px; color:var(--muted)}
+  .stack-list li{margin-bottom:6px; padding-left:14px; position:relative}
+  .stack-list li:before{content:"•"; position:absolute; left:0; color:var(--brand-2)}
+</style>
+</head>
+<body>
+<header>
+  <h1>CHC HMIS · Form-8 ડેટા એન્ટ્રી <span class="badge" id="monthBadge">—</span></h1>
+  <p>iPhone/મોબાઇલમાં ચાલે · ઓફલાઇન સેવ થાય · એક બટનથી Excel</p>
+</header>
+
+<main>
+  <!-- 1. માહિતી -->
+  <section class="card">
+    <h2>1. ફેસિલિટી / મહિનાની માહિતી</h2>
+    <div class="grid2 row-gap">
+      <div>
+        <label for="facility">CHC / ફેસિલિટીનું નામ</label>
+        <input id="facility" type="text" placeholder="દા.ત. CHC — ધાનેરા" autocomplete="off">
+      </div>
+      <div>
+        <label for="block">તાલુકો / બ્લોક</label>
+        <input id="block" type="text" placeholder="દા.ત. ધાનેરા" autocomplete="off">
+      </div>
+    </div>
+    <div class="grid3">
+      <div>
+        <label for="monthSel">મહિનો</label>
+        <select id="monthSel"></select>
+      </div>
+      <div>
+        <label for="yearSel">વર્ષ</label>
+        <select id="yearSel"></select>
+      </div>
+      <div>
+        <label for="workerSel">ભરનારનું નામ</label>
+        <input id="worker" type="text" placeholder="નામ" autocomplete="off">
+      </div>
+    </div>
+    <p class="hint">મહિનો બદલશો તો એ મહિનાનો ડેટા અલગથી સેવ થશે (દરેક મહિનાનું અલગ રેકોર્ડ).</p>
+  </section>
+
+  <!-- 2. ટેબલ -->
+  <section class="card">
+    <h2>2. દૈનિક આંકડા ભરો</h2>
+    <div class="btn-row row-gap">
+      <button type="button" class="btn-ghost btn-sm" id="btnFillDays">મહિનાના દિવસ પ્રમાણે પંક્તિ બનાવો</button>
+      <button type="button" class="btn-ghost btn-sm" id="btnAddRow">+ ખાલી પંક્તિ</button>
+      <button type="button" class="btn-danger btn-sm" id="btnClear">ડેટા ભૂંસો</button>
+    </div>
+    <div class="table-wrap">
+      <table id="sheet">
+        <thead><tr id="headRow"></tr></thead>
+        <tbody id="bodyRows"></tbody>
+        <tfoot><tr id="footRow"></tr></tfoot>
+      </table>
+    </div>
+    <p class="hint">ફક્ત પીળા/સફેદ ખાનામાં આંકડા લખો. નંબર વાળા કોલમની નીચે કુલ (total) આપોઆપ ગણાશે.</p>
+  </section>
+
+  <!-- 3. કોલમ સેટિંગ -->
+  <section class="card">
+    <details id="colsBox">
+      <summary>3. કોલમ સેટિંગ (Form-8 ના કોલમ પ્રમાણે બદલો)</summary>
+      <div id="colList"></div>
+      <div class="btn-row row-gap">
+        <button type="button" class="btn-ghost btn-sm" id="btnAddCol">+ નવી કોલમ ઉમેરો</button>
+        <button type="button" class="btn-ghost btn-sm" id="btnResetCols">ડિફોલ્ટ કોલમ પાછા લાવો</button>
+      </div>
+      <p class="hint">તમારા Form-8 માં જે કોલમ હોય એ જ નામ લખો (ગુજરાતી કે English). પછી એક્સપોર્ટ કરેલી Excel માં પણ એ જ કોલમ આવશે.</p>
+    </details>
+  </section>
+
+  <!-- 4. બેકઅપ -->
+  <section class="card">
+    <h2>4. બેકઅપ (ડેટા ગુમ ન થાય એ માટે)</h2>
+    <div class="btn-row">
+      <button type="button" class="btn-ghost btn-sm" id="btnBackup">બેકઅપ ફાઇલ સેવ કરો (.json)</button>
+      <button type="button" class="btn-ghost btn-sm" id="btnRestore">બેકઅપ પાછો લાવો</button>
+    </div>
+    <input id="restoreFile" type="file" accept=".json,application/json" style="display:none">
+    <p class="hint">મહિનાના અંતે એક વાર બેકઅપ લઈ લેવો સારો. ડેટા આ ફોન/બ્રાઉઝરમાં જ સેવ થાય છે — કોઈ સર્વર પર જતો નથી.</p>
+  </section>
+</main>
+
+<div class="sticky-actions">
+  <button type="button" class="btn-primary" id="btnXlsx">⬇️ Excel (.xlsx)</button>
+  <button type="button" class="btn-accent" id="btnCsv">⬇️ CSV</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+
+/* ============================================================
+   CHC HMIS Form-8 — ડેટા એન્ટ્રી + Excel એક્સપોર્ટ
+   સંપૂર્ણ ઓફલાઇન. કોઈ લાઇબ્રેરી કે ઇન્ટરનેટ જરૂરી નથી.
+   ============================================================ */
+
+var STORE_PREFIX = "chcForm8::";
+var DEFAULT_COLUMNS = [
+  { key: "date",      label: "તારીખ",                 type: "number", noTotal: true },
+  { key: "opd_total", label: "OPD કુલ દર્દી",          type: "number" },
+  { key: "opd_new",   label: "OPD નવા",                type: "number" },
+  { key: "opd_fu",    label: "OPD ફૉલો-અપ",            type: "number" },
+  { key: "ipd_in",    label: "IPD દાખલ",               type: "number" },
+  { key: "ipd_total", label: "IPD કુલ ભરતી",           type: "number" },
+  { key: "referral",  label: "રેફર કરેલા",             type: "number" },
+  { key: "lab",       label: "લેબ ટેસ્ટ",              type: "number" },
+  { key: "delivery",  label: "ડિલિવરી",                type: "number" },
+  { key: "immun",     label: "ટીકરણ (ડોઝ)",            type: "number" },
+  { key: "remark",    label: "નોંધ",                   type: "text"   }
+];
+
+var GU_MONTHS = ["જાન્યુઆરી","ફેબ્રુઆરી","માર્ચ","એપ્રિલ","મે","જૂન",
+                 "જુલાઈ","ઑગસ્ટ","સપ્ટેમ્બર","ઑક્ટોબર","નવેમ્બર","ડિસેમ્બર"];
+var EN_MONTHS = ["January","February","March","April","May","June",
+                 "July","August","September","October","November","December"];
+
+/* ---------- state ---------- */
+var state = {
+  facility: "",
+  block: "",
+  worker: "",
+  month: new Date().getMonth() + 1,   // 1..12
+  year: new Date().getFullYear(),
+  columns: clone(DEFAULT_COLUMNS),
+  rows: []
+};
+
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function $(sel){ return document.querySelector(sel); }
+function uid(){ return "r" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function daysInMonth(m, y){ return new Date(y, m, 0).getDate(); }
+function docKey(){ return STORE_PREFIX + state.year + "-" + pad2(state.month); }
+function pad2(n){ return String(n).padStart(2, "0"); }
+function num(v){
+  if (v === null || v === undefined) return 0;
+  var s = String(v).replace(/[,\s૦-૯]/g, function(ch){
+    // ગુજરાતી અંકને અંગ્રેજી અંકમાં ફેરવો
+    var gu = "૦૧૨૩૪૫૬૭૮૯";
+    var i = gu.indexOf(ch);
+    return i >= 0 ? String(i) : "";
+  });
+  var n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+function toast(msg){
+  var t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+}
+
+/* ---------- storage ---------- */
+function save(){
+  try{
+    localStorage.setItem(docKey(), JSON.stringify({
+      facility: state.facility, block: state.block, worker: state.worker,
+      month: state.month, year: state.year,
+      columns: state.columns, rows: state.rows
+    }));
+  }catch(e){ toast("સેવ ન થયું: " + e.message); }
+}
+var saveTimer = null;
+function saveSoon(){ clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+
+function load(){
+  var raw = null;
+  try{ raw = localStorage.getItem(docKey()); }catch(e){ raw = null; }
+  if (!raw) return false;
+  try{
+    var d = JSON.parse(raw);
+    state.facility = d.facility || "";
+    state.block = d.block || "";
+    state.worker = d.worker || "";
+    state.columns = (d.columns && d.columns.length) ? d.columns : clone(DEFAULT_COLUMNS);
+    state.rows = Array.isArray(d.rows) ? d.rows : [];
+    return true;
+  }catch(e){ return false; }
+}
+/* ---------- table render ---------- */
+function totals(){
+  var t = {};
+  state.columns.forEach(function(c){
+    if (c.type !== "number" || c.noTotal) return;
+    var s = 0;
+    state.rows.forEach(function(r){ s += num(r[c.key]); });
+    t[c.key] = s;
+  });
+  return t;
+}
+
+function renderHead(){
+  var tr = $("#headRow");
+  tr.innerHTML = "";
+  var th0 = document.createElement("th");
+  th0.textContent = "ક્રમ";
+  tr.appendChild(th0);
+  state.columns.forEach(function(c){
+    var th = document.createElement("th");
+    th.textContent = c.label;
+    tr.appendChild(th);
+  });
+  var thEnd = document.createElement("th");
+  thEnd.textContent = "⋮";
+  tr.appendChild(thEnd);
+}
+
+function renderBody(){
+  var tb = $("#bodyRows");
+  tb.innerHTML = "";
+  var frag = document.createDocumentFragment();
+
+  state.rows.forEach(function(row, idx){
+    var tr = document.createElement("tr");
+
+    var th = document.createElement("th");
+    th.textContent = String(idx + 1);
+    tr.appendChild(th);
+
+    state.columns.forEach(function(c){
+      var td = document.createElement("td");
+      var inp = document.createElement("input");
+      inp.type = "text";
+      inp.value = row[c.key] === undefined || row[c.key] === null ? "" : String(row[c.key]);
+      inp.setAttribute("inputmode", c.type === "number" ? "numeric" : "text");
+      inp.setAttribute("aria-label", c.label + " પંક્તિ " + (idx + 1));
+      inp.addEventListener("input", function(){
+        row[c.key] = inp.value;
+        if (c.type === "number") renderFoot();
+        saveSoon();
+      });
+      td.appendChild(inp);
+      tr.appendChild(td);
+    });
+
+    var tdDel = document.createElement("td");
+    var bDel = document.createElement("button");
+    bDel.type = "button";
+    bDel.className = "icon-btn";
+    bDel.style.minHeight = "34px";
+    bDel.style.width = "34px";
+    bDel.style.fontSize = "14px";
+    bDel.style.borderRadius = "0";
+    bDel.title = "પંક્તિ કાઢી નાખો";
+    bDel.textContent = "✕";
+    bDel.addEventListener("click", function(){
+      state.rows.splice(idx, 1);
+      render();
+      save();
+    });
+    tdDel.appendChild(bDel);
+    tr.appendChild(tdDel);
+
+    frag.appendChild(tr);
+  });
+
+  tb.appendChild(frag);
+}
+
+function renderFoot(){
+  var tr = $("#footRow");
+  tr.innerHTML = "";
+  var td0 = document.createElement("td");
+  td0.textContent = "કુલ";
+  tr.appendChild(td0);
+  var t = totals();
+  state.columns.forEach(function(c){
+    var td = document.createElement("td");
+    td.textContent = (c.type === "number" && !c.noTotal) ? String(t[c.key]) : "—";
+    tr.appendChild(td);
+  });
+  tr.appendChild(document.createElement("td"));
+}
+
+function render(){
+  renderHead();
+  renderBody();
+  renderFoot();
+  $("#monthBadge").textContent = GU_MONTHS[state.month - 1] + " " + state.year;
+}
+
+function renderColumns(){
+  var box = $("#colList");
+  box.innerHTML = "";
+  state.columns.forEach(function(c, i){
+    var wrap = document.createElement("div");
+    wrap.className = "col-item";
+
+    var labelIn = document.createElement("input");
+    labelIn.type = "text";
+    labelIn.value = c.label;
+    labelIn.setAttribute("aria-label", "કોલમનું નામ");
+    labelIn.addEventListener("input", function(){
+      c.label = labelIn.value;
+      render();
+      saveSoon();
+    });
+
+    var sel = document.createElement("select");
+    sel.setAttribute("aria-label", "કોલમનો પ્રકાર");
+    [["number","આંકડા"],["text","લખાણ"]].forEach(function(o){
+      var opt = document.createElement("option");
+      opt.value = o[0];
+      opt.textContent = o[1];
+      sel.appendChild(opt);
+    });
+    sel.value = c.type;
+    sel.addEventListener("change", function(){
+      c.type = sel.value;
+      render();
+      save();
+    });
+
+    var del = document.createElement("button");
+    del.type = "button";
+    del.className = "icon-btn";
+    del.textContent = "✕";
+    del.title = "કોલમ કાઢી નાખો";
+    del.addEventListener("click", function(){
+      if (state.columns.length <= 1){ toast("ઓછામાં ઓછી એક કોલમ રહેવી જોઈએ."); return; }
+      if (!confirm("કોલમ \"" + c.label + "\" અને એનો ડેટા કાઢી નાખવો?")) return;
+      state.columns.splice(i, 1);
+      state.rows.forEach(function(r){ delete r[c.key]; });
+      renderColumns();
+      render();
+      save();
+    });
+
+    wrap.appendChild(labelIn);
+    wrap.appendChild(sel);
+    wrap.appendChild(del);
+    box.appendChild(wrap);
+  });
+}
+/* ============================================================
+   XLSX લખનાર (કોઈ લાઇબ્રેરી વગર — ઓફલાઇન)
+   store (no-compression) ZIP + minimal SpreadsheetML
+   ============================================================ */
+var CRC_TABLE = (function(){
+  var t = new Uint32Array(256);
+  for (var n = 0; n < 256; n++){
+    var c = n;
+    for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+
+function crc32(bytes){
+  var c = 0xFFFFFFFF;
+  for (var i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+function utf8(str){
+  if (window.TextEncoder) return new TextEncoder().encode(str);
+  var out = [];
+  for (var i = 0; i < str.length; i++){
+    var c = str.charCodeAt(i);
+    if (c < 0x80) out.push(c);
+    else if (c < 0x800) out.push(0xC0 | (c >> 6), 0x80 | (c & 63));
+    else out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+  }
+  return new Uint8Array(out);
+}
+
+/* files: [{name, data:Uint8Array}] -> Blob (ZIP, store method) */
+function makeZip(files){
+  var chunks = [], central = [], offset = 0;
+  var enc = utf8;
+
+  files.forEach(function(f){
+    var nameBytes = enc(f.name);
+    var crc = crc32(f.data);
+    var size = f.data.length;
+
+    var lh = new Uint8Array(30 + nameBytes.length);
+    var dv = new DataView(lh.buffer);
+    dv.setUint32(0, 0x04034b50, true);
+    dv.setUint16(4, 20, true);
+    dv.setUint16(6, 0, true);
+    dv.setUint16(8, 0, true);
+    dv.setUint16(10, 0, true);
+    dv.setUint16(12, 0, true);
+    dv.setUint32(14, crc, true);
+    dv.setUint32(18, size, true);
+    dv.setUint32(22, size, true);
+    dv.setUint16(26, nameBytes.length, true);
+    dv.setUint16(28, 0, true);
+    lh.set(nameBytes, 30);
+
+    chunks.push(lh, f.data);
+
+    var ch = new Uint8Array(46 + nameBytes.length);
+    var cv = new DataView(ch.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, 0, true);
+    cv.setUint16(14, 0, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, size, true);
+    cv.setUint32(24, size, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint16(30, 0, true);
+    cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true);
+    cv.setUint16(36, 0, true);
+    cv.setUint32(38, 0, true);
+    cv.setUint32(42, offset, true);
+    ch.set(nameBytes, 46);
+    central.push(ch);
+
+    offset += lh.length + size;
+  });
+
+  var centralSize = central.reduce(function(a, c){ return a + c.length; }, 0);
+  var end = new Uint8Array(22);
+  var ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, offset, true);
+
+  return new Blob(chunks.concat(central, [end]), {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  });
+}
+
+function xmlEsc(s){
+  return String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+}
+
+function colLetter(i){                 // 0 -> A
+  var s = "";
+  i = i + 1;
+  while (i > 0){
+    var r = (i - 1) % 26;
+    s = String.fromCharCode(65 + r) + s;
+    i = Math.floor((i - 1) / 26);
+  }
+  return s;
+}
+function cellXml(ref, value){
+  if (value === null || value === undefined || value === "") return "";
+  if (typeof value === "number" && isFinite(value)){
+    return '<c r="' + ref + '"><v>' + value + "</v></c>";
+  }
+  return '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + xmlEsc(value) + "</t></is></c>";
+}
+
+function formulaCellXml(ref, formula, cached){
+  return '<c r="' + ref + '"><f>' + xmlEsc(formula) + "</f><v>" + (cached || 0) + "</v></c>";
+}
+
+function buildColsXml(){
+  var out = ['<col min="1" max="1" width="6" customWidth="1"/>'];
+  state.columns.forEach(function(c, i){
+    var w = c.type === "number" ? 14 : (c.key === "remark" ? 26 : 18);
+    out.push('<col min="' + (i + 2) + '" max="' + (i + 2) + '" width="' + w + '" customWidth="1"/>');
+  });
+  return out.join("");
+}
+
+function buildSheetXml(){
+  var rows = [];
+  var lastCol = colLetter(state.columns.length);   // ક્રમ + columns
+
+  rows.push('<row r="1">' + cellXml("A1", "CHC HMIS — Form-8 માસિક આંકડા") + "</row>");
+  rows.push('<row r="2">' + cellXml("A2", "ફેસિલિટી") + cellXml("B2", state.facility || "") + "</row>");
+  rows.push('<row r="3">' + cellXml("A3", "તાલુકો / બ્લોક") + cellXml("B3", state.block || "") + "</row>");
+  rows.push('<row r="4">' +
+    cellXml("A4", "મહિનો") +
+    cellXml("B4", GU_MONTHS[state.month - 1] + " " + state.year) +
+    cellXml("D4", "ભરનાર") +
+    cellXml("E4", state.worker || "") +
+    "</row>");
+  rows.push('<row r="5"></row>');
+
+  var headRowNo = 6;
+  var headCells = [cellXml("A" + headRowNo, "ક્રમ")];
+  state.columns.forEach(function(c, i){
+    headCells.push(cellXml(colLetter(i + 1) + headRowNo, c.label));
+  });
+  rows.push('<row r="' + headRowNo + '">' + headCells.join("") + "</row>");
+
+  var firstDataRow = headRowNo + 1;
+  var lastDataRow = firstDataRow + Math.max(state.rows.length, 1) - 1;
+
+  state.rows.forEach(function(row, ri){
+    var rNo = firstDataRow + ri;
+    var cells = [cellXml("A" + rNo, ri + 1)];
+    state.columns.forEach(function(c, ci){
+      var v = row[c.key];
+      var ref = colLetter(ci + 1) + rNo;
+      if (c.type === "number"){
+        cells.push(cellXml(ref, (v === "" || v === undefined || v === null) ? "" : num(v)));
+      } else {
+        cells.push(cellXml(ref, v));
+      }
+    });
+    rows.push('<row r="' + rNo + '">' + cells.join("") + "</row>");
+  });
+
+  var t = totals();
+  var totalRowNo = lastDataRow + 1;
+  var tCells = [cellXml("A" + totalRowNo, "કુલ")];
+  state.columns.forEach(function(c, ci){
+    var ref = colLetter(ci + 1) + totalRowNo;
+    if (c.type === "number" && !c.noTotal){
+      var letter = colLetter(ci + 1);
+      tCells.push(formulaCellXml(ref, "SUM(" + letter + firstDataRow + ":" + letter + lastDataRow + ")", t[c.key]));
+    } else {
+      tCells.push("");
+    }
+  });
+  rows.push('<row r="' + totalRowNo + '">' + tCells.join("") + "</row>");
+
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+    '<dimension ref="A1:' + lastCol + totalRowNo + '"/>' +
+    '<sheetViews><sheetView workbookViewId="0" tabSelected="1">' +
+    '<pane ySplit="' + headRowNo + '" topLeftCell="A' + firstDataRow + '" activePane="bottomLeft" state="frozen"/>' +
+    '</sheetView></sheetViews>' +
+    '<sheetFormatPr defaultRowHeight="15"/>' +
+    '<cols>' + buildColsXml() + '</cols>' +
+    '<sheetData>' + rows.join("") + '</sheetData>' +
+    '</worksheet>';
+}
+function buildXlsxBlob(){
+  var enc = utf8;
+  var files = [];
+
+  files.push({
+    name: "[Content_Types].xml",
+    data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+      '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>' +
+      '</Types>')
+  });
+
+  files.push({
+    name: "_rels/.rels",
+    data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' +
+      '</Relationships>')
+  });
+
+  var sheetName = ("Form-8 " + EN_MONTHS[state.month - 1] + " " + state.year).slice(0, 31);
+  files.push({
+    name: "xl/workbook.xml",
+    data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
+      'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
+      '<sheets><sheet name="' + xmlEsc(sheetName) + '" sheetId="1" r:id="rId1"/></sheets>' +
+      '</workbook>')
+  });
+
+  files.push({
+    name: "xl/_rels/workbook.xml.rels",
+    data: enc('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>' +
+      '</Relationships>')
+  });
+
+  files.push({ name: "xl/worksheets/sheet1.xml", data: enc(buildSheetXml()) });
+
+  return makeZip(files);
+}
+
+function download(blob, filename){
+  if (window.navigator && window.navigator.msSaveOrOpenBlob){
+    window.navigator.msSaveOrOpenBlob(blob, filename);
+    return;
+  }
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){
+    if (a.parentNode) a.parentNode.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 5000);
+}
+
+function fileBase(){
+  var f = (state.facility || "CHC").replace(/[\\/:*?"<>|\s]+/g, "_").slice(0, 40);
+  return "Form8_" + f + "_" + state.year + "-" + pad2(state.month);
+}
+
+/* ---------- CSV ---------- */
+function csvCell(v){
+  var s = v === null || v === undefined ? "" : String(v);
+  if (/[",\n\r]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function buildCsv(){
+  var lines = [];
+  lines.push(csvCell("CHC HMIS — Form-8"));
+  lines.push(csvCell("ફેસિલિટી") + "," + csvCell(state.facility));
+  lines.push(csvCell("તાલુકો/બ્લોક") + "," + csvCell(state.block));
+  lines.push(csvCell("મહિનો") + "," + csvCell(GU_MONTHS[state.month - 1] + " " + state.year));
+  lines.push(csvCell("ભરનાર") + "," + csvCell(state.worker));
+  lines.push("");
+  var head = ["ક્રમ"].concat(state.columns.map(function(c){ return c.label; }));
+  lines.push(head.map(csvCell).join(","));
+  state.rows.forEach(function(row, i){
+    var cells = [i + 1];
+    state.columns.forEach(function(c){
+      var v = row[c.key];
+      cells.push(c.type === "number" && v !== "" && v !== undefined ? num(v) : v);
+    });
+    lines.push(cells.map(csvCell).join(","));
+  });
+  var t = totals();
+  var totalsRow = ["કુલ"];
+  state.columns.forEach(function(c){ totalsRow.push((c.type === "number" && !c.noTotal) ? t[c.key] : ""); });
+  lines.push(totalsRow.map(csvCell).join(","));
+  return "\uFEFF" + lines.join("\r\n");
+}
+/* ---------- init ---------- */
+function fillDays(){
+  var n = daysInMonth(state.month, state.year);
+  var existing = {};
+  state.rows.forEach(function(r){ if (r.date) existing[String(r.date)] = true; });
+  state.rows = [];
+  for (var d = 1; d <= n; d++){
+    var row = { id: uid(), date: String(d) };
+    if (existing[String(d)]) row.date = String(d);
+    state.rows.push(row);
+  }
+}
+
+function initMeta(){
+  var mSel = $("#monthSel");
+  GU_MONTHS.forEach(function(m, i){
+    var o = document.createElement("option");
+    o.value = String(i + 1);
+    o.textContent = m;
+    mSel.appendChild(o);
+  });
+  var ySel = $("#yearSel");
+  var yNow = new Date().getFullYear();
+  for (var y = yNow - 2; y <= yNow + 2; y++){
+    var oy = document.createElement("option");
+    oy.value = String(y);
+    oy.textContent = String(y);
+    ySel.appendChild(oy);
+  }
+  mSel.value = String(state.month);
+  ySel.value = String(state.year);
+
+  $("#facility").value = state.facility;
+  $("#block").value = state.block;
+  $("#worker").value = state.worker;
+
+  $("#facility").addEventListener("input", function(){ state.facility = this.value; saveSoon(); });
+  $("#block").addEventListener("input", function(){ state.block = this.value; saveSoon(); });
+  $("#worker").addEventListener("input", function(){ state.worker = this.value; saveSoon(); });
+
+  mSel.addEventListener("change", function(){
+    save();
+    state.month = parseInt(this.value, 10);
+    var found = load();
+    if (!found){ fillDays(); }
+    renderMod();
+    save();
+  });
+  ySel.addEventListener("change", function(){
+    save();
+    state.year = parseInt(this.value, 10);
+    var found = load();
+    if (!found){ fillDays(); }
+    renderMod();
+    save();
+  });
+}
+
+function renderMod(){
+  $("#facility").value = state.facility;
+  $("#block").value = state.block;
+  $("#worker").value = state.worker;
+  $("#monthSel").value = String(state.month);
+  $("#yearSel").value = String(state.year);
+  renderColumns();
+  render();
+}
+
+function bindButtons(){
+  $("#btnFillDays").addEventListener("click", function(){
+    if (state.rows.some(function(r){
+      return state.columns.some(function(c){
+        return c.key !== "date" && r[c.key] !== undefined && r[c.key] !== "";
+      });
+    }) && !confirm("હાલનો ડેટા ભૂંસાઈ જશે અને ફરીથી નવી પંક્તિઓ બનશે. ચાલુ રાખવું?")){
+      return;
+    }
+    fillDays();
+    render();
+    save();
+    toast("મહિનાના દિવસ પ્રમાણે પંક્તિઓ બની ગઈ.");
+  });
+
+  $("#btnAddRow").addEventListener("click", function(){
+    state.rows.push({ id: uid() });
+    render();
+    save();
+  });
+
+  $("#btnClear").addEventListener("click", function(){
+    if (!confirm("આ મહિનાનો બધો ડેટા ભૂંસી નાખવો?")) return;
+    state.rows = state.rows.map(function(){ return { id: uid() }; });
+    render();
+    save();
+    toast("ડેટા ભૂંસાઈ ગયો.");
+  });
+
+  $("#btnAddCol").addEventListener("click", function(){
+    var label = prompt("નવી કોલમનું નામ લખો (દા.ત. ANC વિઝિટ):", "");
+    if (!label) return;
+    state.columns.push({ key: "c" + Date.now().toString(36), label: label, type: "number" });
+    renderColumns();
+    render();
+    save();
+  });
+
+  $("#btnResetCols").addEventListener("click", function(){
+    if (!confirm("કોલમ ડિફોલ્ટ પર પાછી લાવવી? બીજી કોલમનો ડેટા રહેશે નહીં.")) return;
+    state.columns = clone(DEFAULT_COLUMNS);
+    renderColumns();
+    render();
+    save();
+    toast("ડિફોલ્ટ કોલમ પાછી આવી.");
+  });
+
+  $("#btnXlsx").addEventListener("click", function(){
+    try{
+      var blob = buildXlsxBlob();
+      download(blob, fileBase() + ".xlsx");
+      toast("Excel ફાઇલ ડાઉનલોડ થઈ — Files/Downloads માં જુઓ.");
+    }catch(e){
+      toast("એક્સપોર્ટ ભૂલ: " + e.message);
+    }
+  });
+
+  $("#btnCsv").addEventListener("click", function(){
+    try{
+      var blob = new Blob([buildCsv()], { type: "text/csv;charset=utf-8" });
+      download(blob, fileBase() + ".csv");
+      toast("CSV ફાઇલ ડાઉનલોડ થઈ.");
+    }catch(e){
+      toast("એક્સપોર્ટ ભૂલ: " + e.message);
+    }
+  });
+
+  $("#btnBackup").addEventListener("click", function(){
+    var data = {
+      app: "chc-form8", version: 1, savedAt: new Date().toISOString(),
+      month: state.month, year: state.year,
+      facility: state.facility, block: state.block, worker: state.worker,
+      columns: state.columns, rows: state.rows
+    };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    download(blob, "backup_" + fileBase() + ".json");
+    toast("બેકઅપ સેવ થયો.");
+  });
+
+  $("#btnRestore").addEventListener("click", function(){ $("#restoreFile").click(); });
+
+  $("#restoreFile").addEventListener("change", function(){
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var d = JSON.parse(String(reader.result));
+        if (!d || !Array.isArray(d.columns) || !Array.isArray(d.rows)) throw new Error("ફાઇલ માન્ય નથી");
+        state.month = d.month || state.month;
+        state.year = d.year || state.year;
+        state.facility = d.facility || "";
+        state.block = d.block || "";
+        state.worker = d.worker || "";
+        state.columns = d.columns;
+        state.rows = d.rows;
+        renderMod();
+        save();
+        toast("બેકઅપ પાછો આવી ગયો.");
+      }catch(e){
+        toast("બેકઅપ વાંચી ન શકાયો: " + e.message);
+      }
+    };
+    reader.readAsText(f);
+    this.value = "";
+  });
+}
+
+function boot(){
+  if (!load()){
+    fillDays();
+  }
+  if (!state.rows.length) fillDays();
+  initMeta();
+  renderMod();
+  bindButtons();
+  save();
+}
+
+document.addEventListener("DOMContentLoaded", boot);
+</script>
+
+</body>
+</html>
